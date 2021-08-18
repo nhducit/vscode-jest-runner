@@ -172,7 +172,7 @@ export class JestRunner {
 
   private buildJestCommand(filePath: string, testName?: string, options?: string[]): string {
     const args = this.buildJestArgs(filePath, testName, true, options);
-    return `${'yarn ng test'} ${args.join(' ')}`;
+    return `${'npm run ng test'} ${args.join(' ')}`;
   }
 
   private buildJestArgs(filePath: string, testName: string, withQuotes: boolean, options: string[] = []): string[] {
@@ -188,6 +188,7 @@ export class JestRunner {
       throw new Error(`Cannot file project name in path: ${filePath}`);
     }
     args.push(pathArray[projectsIndex + 1]);
+    args.push('--');
     args.push('--test-path-pattern');
     args.push(quoter(escapeRegExpForPath(normalizePath(filePath))));
 
