@@ -9,7 +9,7 @@ import {
   normalizePath,
   pushMany,
   quote,
-  unquote,
+  unquote
 } from './util';
 
 interface DebugCommand {
@@ -179,7 +179,7 @@ export class JestRunner {
     const args: string[] = [];
     const quoter = withQuotes ? quote : (str) => str;
 
-    args.push('--testPathPattern');
+    args.push('--test-path-pattern');
     args.push(quoter(escapeRegExpForPath(normalizePath(filePath))));
 
     // const jestConfigPath = this.config.getJestConfigPath(filePath);
@@ -189,7 +189,7 @@ export class JestRunner {
     // }
 
     if (testName) {
-      args.push('--testNamePattern');
+      args.push('--test-name-pattern');
       args.push(quoter(escapeSingleQuotes(testName)));
     }
 
