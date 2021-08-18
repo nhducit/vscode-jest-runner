@@ -2,8 +2,8 @@ import { parse } from 'jest-editor-support';
 import * as vscode from 'vscode';
 import { JestRunnerConfig } from './jestRunnerConfig';
 import {
-  escapeRegExpForPath,
   escapeRegExp,
+  escapeRegExpForPath,
   escapeSingleQuotes,
   findFullTestName,
   normalizePath,
@@ -179,24 +179,25 @@ export class JestRunner {
     const args: string[] = [];
     const quoter = withQuotes ? quote : (str) => str;
 
+    args.push('--testPathPattern');
     args.push(quoter(escapeRegExpForPath(normalizePath(filePath))));
 
-    const jestConfigPath = this.config.getJestConfigPath(filePath);
-    if (jestConfigPath) {
-      args.push('-c');
-      args.push(quoter(normalizePath(jestConfigPath)));
-    }
+    // const jestConfigPath = this.config.getJestConfigPath(filePath);
+    // if (jestConfigPath) {
+    //   args.push('-c');
+    //   args.push(quoter(normalizePath(jestConfigPath)));
+    // }
 
     if (testName) {
-      args.push('-t');
+      args.push('--testNamePattern');
       args.push(quoter(escapeSingleQuotes(testName)));
     }
 
     const setOptions = new Set(options);
 
-    if (this.config.runOptions) {
-      this.config.runOptions.forEach((option) => setOptions.add(option));
-    }
+    // if (this.config.runOptions) {
+    //   this.config.runOptions.forEach((option) => setOptions.add(option));
+    // }
 
     args.push(...setOptions);
 
