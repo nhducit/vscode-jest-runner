@@ -2,8 +2,8 @@ import { parse } from 'jest-editor-support';
 import * as vscode from 'vscode';
 import { JestRunnerConfig } from './jestRunnerConfig';
 import {
-  escapeRegExpForPath,
   escapeRegExp,
+  escapeRegExpForPath,
   escapeSingleQuotes,
   findFullTestName,
   normalizePath,
@@ -172,31 +172,42 @@ export class JestRunner {
 
   private buildJestCommand(filePath: string, testName?: string, options?: string[]): string {
     const args = this.buildJestArgs(filePath, testName, true, options);
-    return `${this.config.jestCommand} ${args.join(' ')}`;
+    return `${'npm run ng test'} ${args.join(' ')}`;
   }
 
   private buildJestArgs(filePath: string, testName: string, withQuotes: boolean, options: string[] = []): string[] {
     const args: string[] = [];
     const quoter = withQuotes ? quote : (str) => str;
 
+    const pathArray = filePath.split('/');
+    const projectsIndex = pathArray.findIndex((item) => {
+      return item === 'projects';
+    });
+
+    if (projectsIndex === -1) {
+      throw new Error(`Cannot file project name in path: ${filePath}`);
+    }
+    args.push(pathArray[projectsIndex + 1]);
+    args.push('--');
+    args.push('--test-path-pattern');
     args.push(quoter(escapeRegExpForPath(normalizePath(filePath))));
 
-    const jestConfigPath = this.config.getJestConfigPath(filePath);
-    if (jestConfigPath) {
-      args.push('-c');
-      args.push(quoter(normalizePath(jestConfigPath)));
-    }
+    // const jestConfigPath = this.config.getJestConfigPath(filePath);
+    // if (jestConfigPath) {
+    //   args.push('-c');
+    //   args.push(quoter(normalizePath(jestConfigPath)));
+    // }
 
     if (testName) {
-      args.push('-t');
+      args.push('--test-name-pattern');
       args.push(quoter(escapeSingleQuotes(testName)));
     }
 
     const setOptions = new Set(options);
 
-    if (this.config.runOptions) {
-      this.config.runOptions.forEach((option) => setOptions.add(option));
-    }
+    // if (this.config.runOptions) {
+    //   this.config.runOptions.forEach((option) => setOptions.add(option));
+    // }
 
     args.push(...setOptions);
 
